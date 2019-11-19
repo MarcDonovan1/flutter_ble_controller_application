@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'dart:convert' show utf8;
 import 'dart:io';
+import 'dart:math';
 
 import 'package:control_pad/control_pad.dart';
 import 'package:control_pad/models/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+
+bool debug = false;
 
 Future<void> main() async {
   await SystemChrome.setPreferredOrientations(
@@ -133,8 +136,8 @@ class _JoyPadState extends State<JoyPad> {
   Widget build(BuildContext context) {
     JoystickDirectionCallback onDirectionChanged(
         double degrees, double distance) {
-      int y = (999 * degrees / 360).round();
-      int x = (999 * distance).round();
+      int y = (999*distance*cos(degrees)).round();
+      int x = (999*distance*cos(degrees)).round();
       String data = "sx${x}y$y";
 
       if (degrees >= 270 ||degrees <= 90) {
@@ -145,7 +148,7 @@ class _JoyPadState extends State<JoyPad> {
       writeData(data);
     }
 
-    PadButtonPressedCallback padBUttonPressedCallback(
+    PadButtonPressedCallback padButtonPressedCallback(
         int buttonIndex, Gestures gesture) {
       String data = "";
       if (buttonIndex == 1) {
@@ -177,7 +180,7 @@ class _JoyPadState extends State<JoyPad> {
                     onDirectionChanged: onDirectionChanged,
                   ),
                   PadButtonsView(
-                    padButtonPressedCallback: padBUttonPressedCallback,
+                    padButtonPressedCallback: padButtonPressedCallback,
                   ),
                 ],
               ),
