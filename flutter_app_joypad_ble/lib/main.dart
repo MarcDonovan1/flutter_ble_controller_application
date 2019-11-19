@@ -129,22 +129,30 @@ class _JoyPadState extends State<JoyPad> {
 
     List<int> bytes = utf8.encode(data);
     targetCharacteristic.write(bytes);
-    sleep(const Duration(milliseconds: 4));
+    sleep(const Duration(milliseconds: 1));
   }
 
   @override
   Widget build(BuildContext context) {
     JoystickDirectionCallback onDirectionChanged(
         double degrees, double distance) {
-      int y = (999*distance*cos(degrees)).round();
-      int x = (999*distance*cos(degrees)).round();
-      String data = "sx${x}y$y";
+      double y = (distance * sin(degrees * pi / 180));
+      double x = (distance * cos(degrees * pi / 180));
+      int magnitude = (distance * 999).round();
+      String data = "";
 
-      if (degrees >= 270 ||degrees <= 90) {
-        data = "dx${x}y1e";
-      } else {
-        data = "dx${x}y0e";
+      if (y > 0) {
+        data = "dx${magnitude}y1e";
+      } else if (y < 0) {
+        data = "dx${magnitude}y0e";
       }
+      writeData(data);
+
+      //int steer_direction = ((x*499)+499).round() ;
+      int steer = ((y * 499) + 499).round();
+
+      data = "sx${steer}y${steer}e";
+
       writeData(data);
     }
 
