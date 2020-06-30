@@ -1,6 +1,7 @@
 # flutter_app_joypad_ble
 
 A new Flutter application.
+This is a test of Github connector
 
 ## Getting Started
 
